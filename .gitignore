@@ -1,0 +1,35 @@
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+*.egg
+*.log
+
+# --- Virtual Environments ---
+env/
+venv/
+.venv/
+*/__pycache__/
+conda-meta/
+
+# Ignore ALL Conda environments fully
+*/envs/*
+*/env/*
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- VS Code ---
+.vscode/
+*.code-workspace
+
+# --- OS Files ---
+.DS_Store
+Thumbs.db
+
+# --- Build / Packaging ---
+dist/
+build/

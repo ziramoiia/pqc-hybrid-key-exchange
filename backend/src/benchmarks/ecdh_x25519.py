@@ -51,20 +51,25 @@ def hkdf_derive(shared_secret, info=b'handshake data'):
 def run_ecdh_handshake():
     try:
         #Alice generated keys
+        print("Generating ECDH X25519 keypairs...")
         alice_priv, _, _, alice_pub_bytes = generate_keypair() #_ = ignore private_bytes and a/b_pub as value not required
         #Bob generated keys
         bob_priv, _, _, bob_pub_bytes = generate_keypair()
         #Exchange and derive secrets 
+        print("Deriving shared secrets...")
         alice_shared = derived_shared_secret(alice_priv, bob_pub_bytes) #alice private key and bob public
         bob_shared = derived_shared_secret(bob_priv, alice_pub_bytes) #bob private key and alice public
         #Apply HKDF
+        print("Applying HMAC-based Key Derivation Function...")
         alice_final = hkdf_derive(alice_shared)
         bob_final = hkdf_derive(bob_shared)
         #Validate correctness 
+        print("Generation complete...")
         success = alice_final == bob_final
         return {
             "success": success,
-            "shared_key": len(alice_final) #or bob_final it is the same string
+            "shared_key": alice_final,
+            "key_size": len(alice_final) #or bob_final it is the same string
         }
     except Exception as e: #“Error handling was incorporated into the handshake simulation to ensure that failures did not interrupt benchmarking execution. This allowed reliability to be measured alongside performance, with unsuccessful exchanges recorded and analysed.”
         return {
@@ -86,5 +91,5 @@ def benchmark_ecdh(iterations=100):
             "key_size": result.get("key_size", 0), # should be 32
             "error": result.get("error", None) #failure metric
         })
-        
+
     return results

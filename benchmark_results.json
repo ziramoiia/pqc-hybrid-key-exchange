@@ -1,0 +1,102 @@
+{
+    "timestamp": "2026-04-14 11:53:31.722358",
+    "iterations": 2,
+    "ecdh": {
+        "summary": {
+            "runs": 2,
+            "success_rate": 1.0,
+            "avg_keygen_time": 0.011763150105252862,
+            "avg_encap_time": 0.0,
+            "avg_decap_time": 0.0,
+            "avg_derive_time": 0.0004675999516621232,
+            "avg_kdf_time": 0.0007855499861761928,
+            "avg_total_time": 0.013521049870178103
+        },
+        "results": [
+            {
+                "success": true,
+                "keygen_time": 0.02313240012153983,
+                "derive_time": 0.0006383999716490507,
+                "kdf_time": 0.0013828999362885952,
+                "total_time": 0.025676199933514,
+                "key_size": 32,
+                "error": null
+            },
+            {
+                "success": true,
+                "keygen_time": 0.0003939000889658928,
+                "derive_time": 0.0002967999316751957,
+                "kdf_time": 0.00018820003606379032,
+                "total_time": 0.001365899806842208,
+                "key_size": 32,
+                "error": null
+            }
+        ]
+    },
+    "kyber": {
+        "summary": {
+            "runs": 2,
+            "success_rate": 1.0,
+            "avg_keygen_time": 0.0005190999945625663,
+            "avg_encap_time": 0.00017439993098378181,
+            "avg_decap_time": 0.0001251999055966735,
+            "avg_derive_time": 0.0,
+            "avg_kdf_time": 0.0,
+            "avg_total_time": 0.0008211000822484493
+        },
+        "results": [
+            {
+                "success": true,
+                "keygen_time": 0.0009103999473154545,
+                "encap_time": 0.00024319998919963837,
+                "decap_time": 0.00013770000077784061,
+                "total_time": 0.0012940000742673874,
+                "key_size": 32,
+                "error": null
+            },
+            {
+                "success": true,
+                "keygen_time": 0.00012780004180967808,
+                "encap_time": 0.00010559987276792526,
+                "decap_time": 0.00011269981041550636,
+                "total_time": 0.00034820009022951126,
+                "key_size": 32,
+                "error": null
+            }
+        ]
+    },
+    "hybrid": {
+        "summary": {
+            "runs": 2,
+            "success_rate": 1.0,
+            "avg_keygen_time": 0.00046274997293949127,
+            "avg_encap_time": 0.0002251998521387577,
+            "avg_decap_time": 0.0002202000468969345,
+            "avg_derive_time": 0.0,
+            "avg_kdf_time": 0.011963299941271544,
+            "avg_total_time": 0.012878000037744641
+        },
+        "results": [
+            {
+                "success": true,
+                "keygen_time": 0.0004569999873638153,
+                "encap_time": 0.0002229998353868723,
+                "decap_time": 0.0002202000468969345,
+                "kdf_time": 0.01054759998805821,
+                "total_time": 0.011453400133177638,
+                "final_key_size": 32,
+                "error": null
+            },
+            {
+                "success": true,
+                "keygen_time": 0.00046849995851516724,
+                "encap_time": 0.00022739986889064312,
+                "decap_time": 0.0002202000468969345,
+                "kdf_time": 0.013378999894484878,
+                "total_time": 0.014302599942311645,
+                "final_key_size": 32,
+                "error": null
+            }
+        ]
+    }
+}

@@ -66,11 +66,6 @@ circ.decompose(reps=1).draw(output="mpl", fold=-1)
 # DECOMPOSE 
 circ.decompose(reps=2).draw(output="mpl", fold=-1)
 
-#
-#
-#
-#
-#
 def a2kmodN(a, k, N):
     """Compute a^{2^k} (mod N) by repeated squaring"""
     for _ in range(k):
@@ -81,11 +76,7 @@ k_list = range(8)
 b_list = [a2kmodN(2, k, 15) for k in k_list]
  
 print(b_list)
-#
-#
-#
-#
-#
+
 def M4mod15():
     """
     M4 (mod 15)
@@ -153,12 +144,6 @@ def mod_mult_gate(b, N):
         G.name = f"M_{b}"
         return G
     
-
-    #
-    #
-    #
-    #
-    #
     # Let's build M2 using the permutation matrix definition
 M2_other = mod_mult_gate(2, 15)
  

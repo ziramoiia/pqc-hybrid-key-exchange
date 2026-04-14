@@ -1,10 +1,7 @@
-#python -m pytest -v -s TO RUN
-from backend.src.benchmarks.hybrid_handshake import run_hybrid_handshake
+from backend.src.handshake.hybrid_protocol import run_hybrid_protocol
 
 def test_hybrid_handshake():
-    result = run_hybrid_handshake()
+    result = run_hybrid_protocol()
 
     assert result["success"] == True
     assert result["shared_key"] is not None
-    assert result["final_key_size"] == 32
-    assert result["error"] is None

@@ -4,11 +4,11 @@
 # Compute a shared secret
 # Provide a helper that runs a full handshake between two parties for benchmarking
 
+import time
 from cryptography.hazmat.primitives.asymmetric import x25519
-from cryptography.hazmat.primitives import serialization #, hashes
-from cryptography.hazmat.primitives.kdf.hkdf import HKDF #HMAC-based key derivation function
-from cryptography.hazmat.primitives import hashes
-import time # for benchmark_helper
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF # for benchmarking full ecdh only
+from cryptography.hazmat.primitives import hashes # for benchmarking full ecdh only
 
 def generate_keypair():
     # Generate private key
@@ -17,79 +17,91 @@ def generate_keypair():
     public_key = private_key.public_key()
 
     # Serializing for storage or transmission MUST BE 32BYTES LONG KEY
-    private_bytes = private_key.private_bytes(
-        encoding=serialization.Encoding.Raw,
-        format=serialization.PrivateFormat.Raw,
-        encryption_algorithm=serialization.NoEncryption()
-    )
+    # private_bytes = private_key.private_bytes(
+    #     encoding=serialization.Encoding.Raw,
+    #     format=serialization.PrivateFormat.Raw,
+    #     encryption_algorithm=serialization.NoEncryption()
+    # )
     public_bytes = public_key.public_bytes(
         encoding=serialization.Encoding.Raw,
         format=serialization.PublicFormat.Raw
     )
 
-    return private_key, public_key, private_bytes, public_bytes
+    return private_key, public_bytes
 
-def derived_shared_secret(private_key, peer_public_bytes):
-    # Process key through a Key Derivation Function for a secure fixed-length key
-    # Assume 'private_key' is your loaded X25519 private key object
-    # Assume 'peer_public_key_bytes' is the bytes of your peer's public key
-
+def derive_shared_secret(private_key, peer_public_bytes):
     peer_public_key = x25519.X25519PublicKey.from_public_bytes(peer_public_bytes)
     shared_secret = private_key.exchange(peer_public_key)
 
     return shared_secret
 
-def hkdf_derive(shared_secret, info=b'handshake data'):
+def hkdf_derive(shared_secret, info=b'ecdh-handshake'):
     hkdf = HKDF(
         algorithm=hashes.SHA256(),
-        length=32, # e.g., 32 bytes for AES-256
-        salt=None, # Consider using a salt in production
-        info=info, # Context-specific label
+        length=32,
+        salt=None,  # OK for benchmarking
+        info=info,
     )
     return hkdf.derive(shared_secret)
 
-def run_ecdh_handshake():
+def run_ecdh_protocol():
     try:
-        #Alice generated keys
-        print("Generating ECDH X25519 keypairs...")
-        alice_priv, _, _, alice_pub_bytes = generate_keypair() #_ = ignore private_bytes and a/b_pub as value not required
-        #Bob generated keys
-        bob_priv, _, _, bob_pub_bytes = generate_keypair()
-        #Exchange and derive secrets 
-        print("Deriving shared secrets...")
-        alice_shared = derived_shared_secret(alice_priv, bob_pub_bytes) #alice private key and bob public
-        bob_shared = derived_shared_secret(bob_priv, alice_pub_bytes) #bob private key and alice public
-        #Apply HKDF
-        print("Applying HMAC-based Key Derivation Function...")
+        print("\n[Running FULL ECDH Protocol]")
+
+        # Key generation
+        alice_priv, alice_pub = generate_keypair()
+        bob_priv, bob_pub = generate_keypair()
+
+        # Raw shared secrets
+        alice_shared = derive_shared_secret(alice_priv, bob_pub)
+        bob_shared = derive_shared_secret(bob_priv, alice_pub)
+
+        # HKDF applied
         alice_final = hkdf_derive(alice_shared)
         bob_final = hkdf_derive(bob_shared)
-        #Validate correctness 
-        print("Generation complete...")
+
         success = alice_final == bob_final
+
         return {
             "success": success,
             "shared_key": alice_final,
-            "key_size": len(alice_final) #or bob_final it is the same string
+            "key_size": len(alice_final),
+            "error": None
         }
-    except Exception as e: #“Error handling was incorporated into the handshake simulation to ensure that failures did not interrupt benchmarking execution. This allowed reliability to be measured alongside performance, with unsuccessful exchanges recorded and analysed.”
+
+    except Exception as e:
         return {
             "success": False,
-            "key_size": 0,
             "error": str(e)
         }
 
-def benchmark_ecdh(iterations=100):
-    results = []
-    for _ in range(iterations):
+def benchmark_ecdh_operations():
+
+    try:
+        # Key generation
         start = time.perf_counter()
-        result = run_ecdh_handshake()
-        end = time.perf_counter()
+        alice_priv, alice_pub = generate_keypair()
+        bob_priv, bob_pub = generate_keypair()
+        keygen_time = time.perf_counter() - start
 
-        results.append({
-            "time": end - start, #performance metric
-            "success": result["success"], #reliability metric
-            "key_size": result.get("key_size", 0), # should be 32
-            "error": result.get("error", None) #failure metric
-        })
+        # Shared secret derivation
+        start = time.perf_counter()
+        alice_secret = derive_shared_secret(alice_priv, bob_pub)
+        bob_secret = derive_shared_secret(bob_priv, alice_pub)
+        derive_time = time.perf_counter() - start
 
-    return results
+        success = alice_secret == bob_secret
+
+        return {
+            "success": success,
+            "keygen_time": keygen_time,
+            "derive_time": derive_time,
+            "key_size": len(alice_secret),
+            "error": None
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }

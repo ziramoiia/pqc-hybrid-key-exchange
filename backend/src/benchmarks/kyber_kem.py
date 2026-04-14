@@ -4,7 +4,7 @@
 # Compute a shared secret
 # Provide a helper that runs a full handshake between two parties for benchmarking
 
-import oqs # ib-oqs-python is a python wrapper for  a c library
+import oqs # lib-oqs-python is a python wrapper for  a c library
 import time # for benchmarking helper
 
 def generate_keypair():
@@ -53,21 +53,38 @@ def run_kyber_kem():
             "error": str(e)
         }
 
-def benchmark_keyber(iterations=100):
-    results = []
+def benchmark_kyber_operations():
 
-    for _ in range(iterations):
+    try:
+        # Key generation
         start = time.perf_counter()
-        result = run_kyber_kem()
-        end = time.perf_counter()
+        public_key, secret_key = generate_keypair()
+        keygen_time = time.perf_counter() - start
 
-        results.append({
-            "time": end - start,
-            "success": result["success"],
-            "key_size": result.get("key_size", 0),
-            "error": result.get("error, None")
-        })
+        # Encapsulation
+        start = time.perf_counter()
+        ciphertext, sender_secret = encapsulate(public_key)
+        encaps_time = time.perf_counter() - start
 
-    return results
+        # Decapsulation
+        start = time.perf_counter()
+        receiver_secret = decapsulate(ciphertext, secret_key)
+        decaps_time = time.perf_counter() - start
 
+        success = sender_secret == receiver_secret
+
+        return {
+            "success": success,
+            "keygen_time": keygen_time,
+            "encaps_time": encaps_time,
+            "decaps_time": decaps_time,
+            "key_size": len(sender_secret),
+            "error": None
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
     

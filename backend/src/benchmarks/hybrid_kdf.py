@@ -1,10 +1,6 @@
 import hashlib
 import hmac
 
-from backend.src.benchmarks.ecdh_x25519 import run_ecdh_handshake
-from backend.src.benchmarks.kyber_kem import run_kyber_kem
-
-
 def hkdf_extract(salt: bytes, input_key_material: bytes) -> bytes:
     print("\n[HKDF-EXTRACT]")
     print("Salt:", salt)
@@ -44,6 +40,14 @@ def hkdf_expand(prk: bytes, info: bytes, length: int = 32) -> bytes:
 
     return final_output
 
+# With no print statements:
+# def derive_hybrid_key(ecdh_key: bytes, kyber_key: bytes) -> bytes:
+#     ikm = ecdh_key + kyber_key
+#     salt = b"hybrid-handshake-salt"
+#     info = b"hybrid key agreement"
+
+#     prk = hkdf_extract(salt, ikm)
+#     return hkdf_expand(prk, info, length=32)
 
 def derive_hybrid_key(ecdh_key: bytes, kyber_key: bytes) -> bytes:
     print("\n[HYBRID KEY DERIVATION]")
@@ -72,63 +76,3 @@ def derive_hybrid_key(ecdh_key: bytes, kyber_key: bytes) -> bytes:
     print("Final key:", final_key.hex())
 
     return final_key
-
-
-def run_hybrid_handshake():
-    try:
-        print("\n========== HYBRID HANDSHAKE START ==========")
-
-        # 1. ECDH
-        print("\n--- Running ECDH ---")
-        ecdh_result = run_ecdh_handshake()
-
-        print("ECDH Result:", ecdh_result)
-
-        if not ecdh_result["success"]:
-            return {
-                "success": False,
-                "error": "ECDH failed"
-            }
-
-        # 2. Kyber
-        print("\n--- Running Kyber (ML-KEM) ---")
-        kyber_result = run_kyber_kem()
-
-        print("Kyber Result:", kyber_result)
-
-        if not kyber_result["success"]:
-            return {
-                "success": False,
-                "error": "Kyber failed"
-            }
-
-        # 3. Extract secrets
-        ecdh_shared = ecdh_result["shared_key"]
-        kyber_shared = kyber_result["shared_key"]
-
-        print("\n--- Shared Secrets ---")
-        print("ECDH shared:", ecdh_shared.hex())
-        print("Kyber shared:", kyber_shared.hex())
-
-        # 4. Derive final key
-        final_key = derive_hybrid_key(ecdh_shared, kyber_shared)
-
-        print("\n========== HYBRID HANDSHAKE COMPLETE ==========")
-
-        return {
-            "success": True,
-            "shared_key": final_key,
-            "ecdh_key_size": len(ecdh_shared),
-            "kyber_key_size": len(kyber_shared),
-            "final_key_size": len(final_key),
-            "error": None
-        }
-
-    except Exception as e:
-        print("\n[ERROR OCCURRED]")
-        print(str(e))
-
-        return {
-            "success": False,
-            "error": str(e)
-        }

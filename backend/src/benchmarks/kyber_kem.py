@@ -49,42 +49,43 @@ def run_kyber_kem():
 
         return {
             "success": False, 
+            "shared_key": None,
             "key_size": 0,
             "error": str(e)
         }
 
-def benchmark_kyber_operations():
+# def benchmark_kyber_operations():
 
-    try:
-        # Key generation
-        start = time.perf_counter()
-        public_key, secret_key = generate_keypair()
-        keygen_time = time.perf_counter() - start
+#     try:
+#         # Key generation
+#         start = time.perf_counter()
+#         public_key, secret_key = generate_keypair()
+#         keygen_time = time.perf_counter() - start
 
-        # Encapsulation
-        start = time.perf_counter()
-        ciphertext, sender_secret = encapsulate(public_key)
-        encaps_time = time.perf_counter() - start
+#         # Encapsulation
+#         start = time.perf_counter()
+#         ciphertext, sender_secret = encapsulate(public_key)
+#         encaps_time = time.perf_counter() - start
 
-        # Decapsulation
-        start = time.perf_counter()
-        receiver_secret = decapsulate(ciphertext, secret_key)
-        decaps_time = time.perf_counter() - start
+#         # Decapsulation
+#         start = time.perf_counter()
+#         receiver_secret = decapsulate(ciphertext, secret_key)
+#         decaps_time = time.perf_counter() - start
 
-        success = sender_secret == receiver_secret
+#         success = sender_secret == receiver_secret
 
-        return {
-            "success": success,
-            "keygen_time": keygen_time,
-            "encaps_time": encaps_time,
-            "decaps_time": decaps_time,
-            "key_size": len(sender_secret),
-            "error": None
-        }
+#         return {
+#             "success": success,
+#             "keygen_time": keygen_time,
+#             "encaps_time": encaps_time,
+#             "decaps_time": decaps_time,
+#             "key_size": len(sender_secret),
+#             "error": None
+#         }
 
-    except Exception as e:
-        return {
-            "success": False,
-            "error": str(e)
-        }
+#     except Exception as e:
+#         return {
+#             "success": False,
+#             "error": str(e)
+#         }
     

@@ -1,11 +1,10 @@
 import sys
 import os
+from backend.src.benchmarks.kyber_kem import run_kyber_kem
 #python -m pytest -v -s TO RUN
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from backend.src.benchmarks.kyber_kem import run_kyber_kem
 
-def test_kyber_output_structure():
-    print("TEST")
+def test_kyber_output():
     result = run_kyber_kem()
 
     assert "success" in result

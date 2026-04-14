@@ -72,36 +72,38 @@ def run_ecdh_protocol():
     except Exception as e:
         return {
             "success": False,
+            "shared_key": None,
+            "key_size": 0,
             "error": str(e)
         }
 
-def benchmark_ecdh_operations():
+# def benchmark_ecdh_operations():
 
-    try:
-        # Key generation
-        start = time.perf_counter()
-        alice_priv, alice_pub = generate_keypair()
-        bob_priv, bob_pub = generate_keypair()
-        keygen_time = time.perf_counter() - start
+#     try:
+#         # Key generation
+#         start = time.perf_counter()
+#         alice_priv, alice_pub = generate_keypair()
+#         bob_priv, bob_pub = generate_keypair()
+#         keygen_time = time.perf_counter() - start
 
-        # Shared secret derivation
-        start = time.perf_counter()
-        alice_secret = derive_shared_secret(alice_priv, bob_pub)
-        bob_secret = derive_shared_secret(bob_priv, alice_pub)
-        derive_time = time.perf_counter() - start
+#         # Shared secret derivation
+#         start = time.perf_counter()
+#         alice_secret = derive_shared_secret(alice_priv, bob_pub)
+#         bob_secret = derive_shared_secret(bob_priv, alice_pub)
+#         derive_time = time.perf_counter() - start
 
-        success = alice_secret == bob_secret
+#         success = alice_secret == bob_secret
 
-        return {
-            "success": success,
-            "keygen_time": keygen_time,
-            "derive_time": derive_time,
-            "key_size": len(alice_secret),
-            "error": None
-        }
+#         return {
+#             "success": success,
+#             "keygen_time": keygen_time,
+#             "derive_time": derive_time,
+#             "key_size": len(alice_secret),
+#             "error": None
+#         }
 
-    except Exception as e:
-        return {
-            "success": False,
-            "error": str(e)
-        }
+#     except Exception as e:
+#         return {
+#             "success": False,
+#             "error": str(e)
+#         }

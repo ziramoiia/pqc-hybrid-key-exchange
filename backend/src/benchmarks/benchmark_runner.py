@@ -98,71 +98,162 @@ def benchmark_kyber_operations():
             "error": str(e)
         }
     
+# def benchmark_hybrid_protocol():
+#     try:
+#         start_total = time.perf_counter()
+
+#         # Key generation (both parties)
+#         start = time.perf_counter()
+#         alice = Alice()
+#         bob = Bob()
+#         keygen_time = time.perf_counter() - start
+
+#         # Exchange public keys
+#         bob_ecdh_pub, bob_kyber_pub = bob.get_public_keys()
+
+#         # Alice computes secrets + encapsulates
+#         start = time.perf_counter()
+#         alice_data = alice.generate_secrets(bob_ecdh_pub, bob_kyber_pub)
+#         encap_time = time.perf_counter() - start
+
+#         # Bob decapsulates + derives
+#         start = time.perf_counter()
+#         bob_data = bob.compute_secrets(
+#             alice.ecdh_public,
+#             alice_data["ciphertext"]
+#         )
+
+#         decap_time = time.perf_counter() - start
+
+#         # HKDF Hybrid
+#         start = time.perf_counter()
+#         alice_final = derive_hybrid_key(
+#             alice_data["ecdh_secret"],
+#             alice_data["kyber_secret"]
+#         )
+#         bob_final = derive_hybrid_key(
+#             bob_data["ecdh_secret"],
+#             bob_data["kyber_secret"]
+#         )
+#         kdf_time = time.perf_counter() - start
+
+#         total_time = time.perf_counter() - start_total
+#         success = alice_final == bob_final
+
+#         return {
+#             "success": success,
+#             "keygen_time": keygen_time,
+#             "encap_time": encap_time,
+#             "decap_time": decap_time,
+#             "kdf_time": kdf_time,
+#             "total_time": total_time,
+#             "final_key_size": len(alice_final),
+#             "error": None
+#         }
+
+#     except Exception as e:
+#         return {
+#             "success": False,
+#             "error": str(e)
+#         }
+    
 def benchmark_hybrid_protocol():
     try:
-        start_total = time.perf_counter()
+        total_start = time.perf_counter()
 
-        # Key generation (both parties)
+        # Step timings
+        step_times = {}
+
+        # Init
         start = time.perf_counter()
         alice = Alice()
         bob = Bob()
-        keygen_time = time.perf_counter() - start
+        step_times["initialisation"] = time.perf_counter() - start
 
-        # Exchange public keys
+        # Key exchange
+        # start = time.perf_counter()
         bob_ecdh_pub, bob_kyber_pub = bob.get_public_keys()
+        # alice_result = alice.generate_secrets(bob_ecdh_pub, bob_kyber_pub)
+        # bob_result = bob.compute_secrets(alice.ecdh_public, alice_result["ciphertext"])
+        # step_times["exchange"] = time.perf_counter() - start
 
-        # Alice computes secrets + encapsulates
+        # Alice encapsulation
         start = time.perf_counter()
-        alice_data = alice.generate_secrets(bob_ecdh_pub, bob_kyber_pub)
+        alice_result = alice.generate_secrets(bob_ecdh_pub, bob_kyber_pub)
         encap_time = time.perf_counter() - start
 
-        # Bob decapsulates + derives
+        # Bob decapsulation
         start = time.perf_counter()
-        bob_data = bob.compute_secrets(
+        bob_result = bob.compute_secrets(
             alice.ecdh_public,
-            alice_data["ciphertext"]
+            alice_result["ciphertext"]
         )
-
         decap_time = time.perf_counter() - start
 
-        # HKDF Hybrid
+        # STEP 5: Validate secrets match
+        alice_ecdh_secret = alice_result["ecdh_secret"]
+        alice_kyber_secret = alice_result["kyber_secret"]
+        bob_ecdh_secret = bob_result["ecdh_secret"]
+        bob_kyber_secret = bob_result["kyber_secret"]
+        ecdh_match = alice_ecdh_secret == bob_ecdh_secret
+        kyber_match = alice_kyber_secret == bob_kyber_secret
+
+        # HKDF
         start = time.perf_counter()
         alice_final = derive_hybrid_key(
-            alice_data["ecdh_secret"],
-            alice_data["kyber_secret"]
+            alice_result["ecdh_secret"],
+            alice_result["kyber_secret"]
         )
         bob_final = derive_hybrid_key(
-            bob_data["ecdh_secret"],
-            bob_data["kyber_secret"]
+            bob_result["ecdh_secret"],
+            bob_result["kyber_secret"]
         )
-        kdf_time = time.perf_counter() - start
+        step_times["hkdf"] = time.perf_counter() - start
 
-        total_time = time.perf_counter() - start_total
-        success = alice_final == bob_final
+        total_time = time.perf_counter() - total_start
 
+        # Success determined if BOTH secrets and final key match
+        success = (ecdh_match and kyber_match and (alice_final == bob_final))
+
+        # return {
+        #     "success": success,
+        #     "ecdh_secrets_match": ecdh_match,
+        #     "kyber_secrets_match": kyber_match,
+        #     "total_time": total_time,
+        #     "step_times": step_times,
+        #     "key_size": len(alice_final),
+        #     "error": None if success else "Final keys do not match"
+        # }
+    
         return {
-            "success": success,
-            "keygen_time": keygen_time,
-            "encap_time": encap_time,
-            "decap_time": decap_time,
-            "kdf_time": kdf_time,
-            "total_time": total_time,
-            "final_key_size": len(alice_final),
-            "error": None
-        }
+        "success": success,
+        "ecdh_match": ecdh_match,
+        "kyber_match": kyber_match,
+        "keygen_time": step_times["initialisation"],
+        "encap_time": encap_time,
+        "decap_time": decap_time,
+        "kdf_time": step_times["hkdf"],
+        "total_time": total_time,
+        "key_size": len(alice_final),
+        "error": None if success else "Final keys do not match"
+    }
 
     except Exception as e:
         return {
             "success": False,
             "error": str(e)
         }
-    
+
 def summarise(results):
     total = len(results)
     successes = sum(1 for r in results if r["success"])
 
+    # def avg(field):
+    #     return sum(r.get(field, 0) for r in results) / total
+
     def avg(field):
-        return sum(r.get(field, 0) for r in results) / total
+        valid = [r[field] for r in results if r.get("success") and field in r]
+        return sum(valid) / len(valid) if valid else None
 
     return {
         "runs": total,
@@ -174,7 +265,7 @@ def summarise(results):
         "avg_kdf_time": avg("kdf_time"),
         "avg_total_time": avg("total_time")
     }
-# When is this called?
+
 def run_benchmark(func, iterations=50, name=""):
     print(f"\n--- Running {name} ({iterations} iterations) ---")
 
@@ -183,6 +274,13 @@ def run_benchmark(func, iterations=50, name=""):
     for i in range(iterations):
         print(f"{name} iteration {i+1}/{iterations}")
         result = func()
+        #result["ID"] = i + 1
+        result = {
+            "ID": i + 1,
+            "protocol": name,
+            **result
+        }
+
         print("Result:", result, "\n")
         results.append(result)
 
@@ -232,7 +330,7 @@ def run_all_benchmarks(iterations=50):
     }
 
     # Save JSON
-    with open("benchmark_results.json", "w") as f:
+    with open("data/benchmark_results.json", "w") as f:
         json.dump(output, f, indent=4)
 
     print("Results saved to benchmark_results.json")

@@ -72,7 +72,7 @@ def run_hybrid_protocol():
 
         return {
             "success": success,
-            "shared_key": alice_final,
+            "shared_key": alice_final.hex(), # For API Fetch request data must be formatted as JSON does not support bytes
             "ecdh_key_size": len(alice_ecdh_secret),
             "kyber_key_size": len(alice_kyber_secret),
             "final_key_size": len(alice_final),

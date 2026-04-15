@@ -9,6 +9,7 @@ import {
 } from "chart.js";
 
 import { Line } from "react-chartjs-2";
+import { convertMs } from "../utils/unitConversion";
 
 ChartJS.register(
   CategoryScale,
@@ -22,7 +23,7 @@ ChartJS.register(
 function Linechart({ data, includeFirst }) {
   const process = (results) => {
     let filtered = includeFirst ? results : results.slice(1);
-    return filtered.map(r => r.total_time);
+    return filtered.map(r => convertMs(r.total_time));
   };
 
   const labels = data.ecdh.results.map(r => r.ID);

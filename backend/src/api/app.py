@@ -25,6 +25,10 @@ def home():
 def benchmark():
     with open("data/benchmark_results.json") as f:
         return jsonify(json.load(f))
+    
+@app.route("/api/run/hybrid")
+def run_hybrid():
+    return jsonify(run_hybrid_protocol())
 
 # Individual endpoints
 @app.route("/api/ecdh")
@@ -34,10 +38,6 @@ def ecdh():
 @app.route("/api/kyber")
 def kyber():
     return jsonify(run_kyber_kem())
-
-@app.route("/api/hybrid")
-def hybrid():
-    return jsonify(run_hybrid_protocol())
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -2,6 +2,8 @@ import { useState } from "react";
 import SummaryCards from "./components/SummaryCards";
 import Barchart from "./components/Barchart";
 import Linechart from "./components/Linechart";
+import OperationsChart from "./components/OperationsChart";
+import HybridLive from "./components/HybridLive";
 
 function Dashboard({ data }) {
   const [includeFirst, setIncludeFirst] = useState(true);
@@ -44,7 +46,7 @@ function Dashboard({ data }) {
         {/* Bar Chart */}
         <div className="bg-white p-4 rounded-xl shadow col-span-3">
           <h2 className="font-semibold mb-2">Average Performance</h2>
-          <Barchart data={data} />
+          <Barchart data={data} includeFirst={includeFirst}/>
         </div>
 
         {/* Line Chart */}
@@ -52,7 +54,28 @@ function Dashboard({ data }) {
           <h2 className="font-semibold mb-2">Iteration Performance</h2>
           <Linechart data={data} includeFirst={includeFirst} />
         </div>
+        <div className="bg-white p-4 rounded-xl shadow col-span-2">
+          <h2 className="font-semibold mb-2">Iteration Performance</h2>
+          <Linechart data={data} includeFirst={includeFirst} />
+        </div>
+        <div className="bg-white p-4 rounded-xl shadow col-span-2">
+          <h2 className="font-semibold mb-2">Iteration Performance</h2>
+          <Linechart data={data} includeFirst={includeFirst} />
+        </div>
 
+        {/* Hybrid Handshake Demo */}
+        <div className="col-span-2">
+          <HybridLive />
+        </div>
+
+        <div className="bg-white p-4 rounded-xl shadow col-span-3">
+          <h2 className="font-semibold mb-2">Iteration Performance</h2>
+          <OperationsChart data={data} />
+        </div>
+        <div className="bg-white p-4 rounded-xl shadow col-span-3">
+          <h2 className="font-semibold mb-2">Iteration Performance</h2>
+          <Linechart data={data} includeFirst={includeFirst} />
+        </div>
       </div>
     </div>
   );

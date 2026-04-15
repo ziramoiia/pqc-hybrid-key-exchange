@@ -9,8 +9,8 @@ import {
 } from "chart.js";
 
 import { Bar } from "react-chartjs-2";
+import { convertMs } from "../utils/unitConversion";
 
-// ✅ REGISTER COMPONENTS
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -20,16 +20,29 @@ ChartJS.register(
   Legend
 );
 
-function Barchart({ data }) {
+function Barchart({ data, includeFirst }) {
+  const process = (results) => {
+    const filtered = includeFirst ? results : results.slice(1); // remove first iteration 
+
+    if (filtered.length === 0) return 0; // edge case if iterations = 1
+
+    const sum = filtered.reduce((acc, r) => acc + r.total_time, 0); // collapses array to a single value
+    return sum / filtered.length;
+  };
+  // const labels = data.ecdh.results.map(r => r.ID);
   const chartData = {
+    // labels: includeFirst ? labels : labels.slice(1),
     labels: ["ECDH", "Kyber", "Hybrid"],
     datasets: [
       {
-        label: "Average Time (s)",
+        label: "Average Time (ms)",
+        // label: includeFirst
+        //   ? "Average Time (s) (All Runs)"
+        //   : "Average Time (s) (Excluding First Run)",
         data: [
-          data.ecdh.summary.avg_total_time,
-          data.kyber.summary.avg_total_time,
-          data.hybrid.summary.avg_total_time
+          convertMs(process(data.ecdh.results)),
+          convertMs(process(data.kyber.results)),
+          convertMs(process(data.hybrid.results))
         ],
         backgroundColor: ["#3b82f6", "#10b981", "#f59e0b"]
       }

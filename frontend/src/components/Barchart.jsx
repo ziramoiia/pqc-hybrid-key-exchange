@@ -1,4 +1,3 @@
-import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,28 +8,35 @@ import {
   Legend
 } from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+import { Bar } from "react-chartjs-2";
+
+// ✅ REGISTER COMPONENTS
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function Barchart({ data }) {
   const chartData = {
     labels: ["ECDH", "Kyber", "Hybrid"],
     datasets: [
       {
-        label: "Avg Total Time (s)",
+        label: "Average Time (s)",
         data: [
           data.ecdh.summary.avg_total_time,
           data.kyber.summary.avg_total_time,
           data.hybrid.summary.avg_total_time
-        ]
+        ],
+        backgroundColor: ["#3b82f6", "#10b981", "#f59e0b"]
       }
     ]
   };
 
-  return (
-    <div className="card">
-      <Bar data={chartData} />
-    </div>
-  );
+  return <Bar data={chartData} />;
 }
 
 export default Barchart;

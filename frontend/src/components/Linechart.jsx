@@ -1,4 +1,3 @@
-import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,46 +8,47 @@ import {
   Legend
 } from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
+import { Line } from "react-chartjs-2";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend
+);
 
 function Linechart({ data, includeFirst }) {
-    //Filter logic
-    const ecdhResults = includeFirst
-      ? data.ecdh.results
-      : data.ecdh.results.slice(1);
-  
-    const kyberResults = includeFirst
-      ? data.kyber.results
-      : data.kyber.results.slice(1);
-  
-    const hybridResults = includeFirst
-      ? data.hybrid.results
-      : data.hybrid.results.slice(1);
-  
-    const labels = ecdhResults.map(r => r.ID);
-  
-    const chartData = {
-      labels,
-      datasets: [
-        {
-          label: "ECDH",
-          data: ecdhResults.map(r => r.total_time)
-        },
-        {
-          label: "Kyber",
-          data: kyberResults.map(r => r.total_time)
-        },
-        {
-          label: "Hybrid",
-          data: hybridResults.map(r => r.total_time)
-        }
-      ]
-    };
-  
-    return (
-      <div className="card">
-        <Line data={chartData} />
-      </div>
-    );
-  }
+  const process = (results) => {
+    let filtered = includeFirst ? results : results.slice(1);
+    return filtered.map(r => r.total_time);
+  };
+
+  const labels = data.ecdh.results.map(r => r.ID);
+
+  const chartData = {
+    labels: includeFirst ? labels : labels.slice(1),
+    datasets: [
+      {
+        label: "ECDH",
+        data: process(data.ecdh.results),
+        borderColor: "#3b82f6"
+      },
+      {
+        label: "Kyber",
+        data: process(data.kyber.results),
+        borderColor: "#10b981"
+      },
+      {
+        label: "Hybrid",
+        data: process(data.hybrid.results),
+        borderColor: "#f59e0b"
+      }
+    ]
+  };
+
+  return <Line data={chartData} />;
+}
+
 export default Linechart;

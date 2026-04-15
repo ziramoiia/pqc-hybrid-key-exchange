@@ -1,55 +1,49 @@
-// function SummaryCards({ data }) {
-//     return (
-//       <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
-        
-//         <div style={cardStyle}>
-//           <h3>ECDH Avg Time</h3>
-//           <p>{data.ecdh.summary.avg_total_time.toFixed(6)} s</p>
-//         </div>
-  
-//         <div style={cardStyle}>
-//           <h3>Kyber Avg Time</h3>
-//           <p>{data.kyber.summary.avg_total_time.toFixed(6)} s</p>
-//         </div>
-  
-//         <div style={cardStyle}>
-//           <h3>Hybrid Avg Time</h3>
-//           <p>{data.hybrid.summary.avg_total_time.toFixed(6)} s</p>
-//         </div>
-  
-//       </div>
-//     );
-//   }
-  
-//   const cardStyle = {
-//     padding: "15px",
-//     border: "1px solid #ccc",
-//     borderRadius: "10px",
-//     width: "200px",
-//     textAlign: "center",
-//     backgroundColor: "#f9f9f9"
-//   };
-  
-//   export default SummaryCards;
+function Card({ title, value }) {
+  return (
+    <div className="bg-white p-4 rounded-xl shadow">
+      <p className="text-sm text-gray-500">{title}</p>
+      <p className="text-lg font-semibold">{value}</p>
+    </div>
+  );
+}
+
 function SummaryCards({ data }) {
-    return (
-      <div className="flex">
-        <div className="card summary-card">
-          <h3>ECDH Avg Time</h3>
-          <p>{data.ecdh.summary.avg_total_time.toFixed(6)} s</p>
-        </div>
-  
-        <div className="card summary-card">
-          <h3>Kyber Avg Time</h3>
-          <p>{data.kyber.summary.avg_total_time.toFixed(6)} s</p>
-        </div>
-  
-        <div className="card summary-card">
-          <h3>Hybrid Avg Time</h3>
-          <p>{data.hybrid.summary.avg_total_time.toFixed(6)} s</p>
-        </div>
+  return (
+    <div className="grid grid-cols-6 gap-4">
+
+      <Card
+        title="ECDH Avg Time"
+        value={`${data.ecdh.summary.avg_total_time.toFixed(6)} s`}
+      />
+
+      <Card
+        title="Kyber Avg Time"
+        value={`${data.kyber.summary.avg_total_time.toFixed(6)} s`}
+      />
+
+      <Card
+        title="Hybrid Avg Time"
+        value={`${data.hybrid.summary.avg_total_time.toFixed(6)} s`}
+      />
+
+      {/* <Card
+        title="ECDH Success Rate"
+        value={`${(data.ecdh.summary.success_rate * 100).toFixed(1)}%`}
+      />
+
+      <Card
+        title="Kyber Success Rate"
+        value={`${(data.kyber.summary.success_rate * 100).toFixed(1)}%`}
+      /> */}
+      <div className="col-start-5 col-span-2">
+        <Card
+          title="Global iterations"
+          value={`${data.iterations}`}
+        />
       </div>
-    );
-  }
-  
-  export default SummaryCards;
+
+    </div>
+  );
+}
+
+export default SummaryCards;

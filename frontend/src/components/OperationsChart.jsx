@@ -20,22 +20,17 @@ ChartJS.register(
   Legend
 );
 
-function OperationsChart({ data }) {
-  const avg = (results, field) => {
-    const valid = results.filter(r => r[field] !== undefined);
+function OperationsChart({ data , includeFirst}) {
+  const avgProcess = (results, field) => {
+    if (!Array.isArray(results)) return 0;
+
+    const filtered = includeFirst ? results : results.slice(1);
+    const valid = filtered.filter(r => r[field] !== undefined);
     if (valid.length === 0) return 0;
   
     const sum = valid.reduce((acc, r) => acc + r[field], 0);
     return sum / valid.length;
   };
-  // const process = (results) => {
-  //   const filtered = includeFirst ? results : results.slice(1); // remove first iteration 
-
-  //   if (filtered.length === 0) return 0; // edge case if iterations = 1
-
-  //   const sum = filtered.reduce((acc, r) => acc + r.total_time, 0); // collapses array to a single value
-  //   return sum / filtered.length;
-  // };
 
   const chartData = {
     labels: ["KeyGen", "Encap", "Decap", "KDF"],
@@ -43,29 +38,33 @@ function OperationsChart({ data }) {
       {
         label: "ECDH",
         data: [
-          convertMs(avg(data.ecdh.results, "keygen_time")),
+          convertMs(avgProcess(data.ecdh.results, "keygen_time")),
           0,
           0,
-          convertMs(avg(data.ecdh.results, "kdf_time"))
-        ]
+          convertMs(avgProcess(data.ecdh.results, "kdf_time"))
+        ],
+        backgroundColor: "#3b82f6",
+
       },
       {
         label: "Kyber",
         data: [
-          convertMs(avg(data.kyber.results, "keygen_time")),
-          convertMs(avg(data.kyber.results, "encap_time")),
-          convertMs(avg(data.kyber.results, "decap_time")),
+          convertMs(avgProcess(data.kyber.results, "keygen_time")),
+          convertMs(avgProcess(data.kyber.results, "encap_time")),
+          convertMs(avgProcess(data.kyber.results, "decap_time")),
           0
-        ]
+        ],
+        backgroundColor: "#10b981",
       },
       {
         label: "Hybrid",
         data: [
-          convertMs(avg(data.hybrid.results, "keygen_time")),
-          convertMs(avg(data.hybrid.results, "encap_time")),
-          convertMs(avg(data.hybrid.results, "decap_time")),
-          convertMs(avg(data.hybrid.results, "kdf_time"))
-        ]
+          convertMs(avgProcess(data.hybrid.results, "keygen_time")),
+          convertMs(avgProcess(data.hybrid.results, "encap_time")),
+          convertMs(avgProcess(data.hybrid.results, "decap_time")),
+          convertMs(avgProcess(data.hybrid.results, "kdf_time"))
+        ],
+        backgroundColor: "#f59e0b"
       }
     ]
   };

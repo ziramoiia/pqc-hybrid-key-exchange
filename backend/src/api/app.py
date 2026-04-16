@@ -15,20 +15,16 @@ CORS(app)
 def home():
     return {"message": "API is running"}
 
-# Benchmark endpoint
-# @app.route("/api/benchmark")
-# def benchmark():
-#     results = run_all_benchmarks(iterations=69)
-#     return jsonify(results)
-
+# Re-run Benchmark endpoint
 @app.route("/api/benchmark")
 def benchmark():
+    results = run_all_benchmarks(iterations=100)
+    return jsonify(results)
+
+@app.route("/api/benchmarkjson")
+def benchmarkjson():
     with open("data/benchmark_results.json") as f:
         return jsonify(json.load(f))
-    
-@app.route("/api/run/hybrid")
-def run_hybrid():
-    return jsonify(run_hybrid_protocol())
 
 # Individual endpoints
 @app.route("/api/ecdh")
@@ -38,6 +34,10 @@ def ecdh():
 @app.route("/api/kyber")
 def kyber():
     return jsonify(run_kyber_kem())
+
+@app.route("/api/run/hybrid")
+def run_hybrid():
+    return jsonify(run_hybrid_protocol())
 
 if __name__ == "__main__":
     app.run(debug=True)

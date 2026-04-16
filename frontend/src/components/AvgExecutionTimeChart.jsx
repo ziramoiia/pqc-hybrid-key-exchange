@@ -20,12 +20,13 @@ ChartJS.register(
   Legend
 );
 
-function Barchart({ data, includeFirst }) {
+function AvgExecutionTimeChart({ data, includeFirst }) {
   const process = (results) => {
-    const filtered = includeFirst ? results : results.slice(1); // remove first iteration 
+    // remove first iteration 
+    const filtered = includeFirst ? results : results.slice(1); 
 
     if (filtered.length === 0) return 0; // edge case if iterations = 1
-
+    // calculate new average
     const sum = filtered.reduce((acc, r) => acc + r.total_time, 0); // collapses array to a single value
     return sum / filtered.length;
   };
@@ -52,4 +53,4 @@ function Barchart({ data, includeFirst }) {
   return <Bar data={chartData} />;
 }
 
-export default Barchart;
+export default AvgExecutionTimeChart;

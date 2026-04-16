@@ -20,7 +20,7 @@ ChartJS.register(
   Legend
 );
 
-function Linechart({ data, includeFirst }) {
+function IterationsChart({ data, includeFirst }) {
   const process = (results) => {
     let filtered = includeFirst ? results : results.slice(1);
     return filtered.map(r => convertMs(r.total_time));
@@ -52,4 +52,4 @@ function Linechart({ data, includeFirst }) {
   return <Line data={chartData} />;
 }
 
-export default Linechart;
+export default IterationsChart;

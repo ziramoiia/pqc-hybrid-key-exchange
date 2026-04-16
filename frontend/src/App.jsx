@@ -3,13 +3,20 @@ import Dashboard from "./Dashboard";
 
 function App() {
   const [data, setData] = useState(null);
+  // so fetchData can be called anytime not just at page load
+  const fetchData = async () => { 
+    try {
+      const res = await fetch("http://127.0.0.1:5000/api/benchmarkjson");
+      const json = await res.json();
+      setData(json);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/benchmark")
-      .then(res => res.json())
-      .then(data => setData(data))
-      .catch(err => console.error(err));
-  }, []);
+    fetchData();
+  }, []); 
 
   if (!data) {
     return (
@@ -21,7 +28,7 @@ function App() {
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      <Dashboard data={data} />
+      <Dashboard data={data} refreshData={fetchData} />;
     </div>
   );
 }

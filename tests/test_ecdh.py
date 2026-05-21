@@ -18,5 +18,5 @@ def test_ecdh_output():
     assert result["key_size"] > 0
     assert result["error"] is None
 
-    # Optional: ensure shared key is bytes
+    # Ensure shared key is bytes
     assert isinstance(result["shared_key"], bytes)

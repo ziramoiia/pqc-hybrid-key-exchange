@@ -6,19 +6,19 @@ def run_hybrid_protocol():
     try:
         print("\n========== HYBRID HANDSHAKE START ==========")
         # STEP 1: Initialise Alice and Bob
-        print("\n--- [STEP 1] Initialising Alice and Bob ---")
+        print("\n[STEP 1] Initialising Alice and Bob")
         alice = Alice()
         bob = Bob()
 
         # STEP 2: Bob shares public keys
-        print("\n--- [STEP 2] Bob shares public keys ---")
+        print("\n[STEP 2] Bob shares public keys")
         bob_ecdh_pub, bob_kyber_pub = bob.get_public_keys()
 
         print("Bob ECDH public key length:", len(bob_ecdh_pub))
         print("Bob Kyber public key length:", len(bob_kyber_pub))
 
         # STEP 3: Alice generates secrets
-        print("\n--- [STEP 3] Alice generates secrets ---")
+        print("\n[STEP 3] Alice generates secrets")
         alice_result = alice.generate_secrets(bob_ecdh_pub, bob_kyber_pub)
 
         alice_ecdh_secret = alice_result["ecdh_secret"]
@@ -29,7 +29,7 @@ def run_hybrid_protocol():
         print("Alice Kyber secret:", alice_kyber_secret.hex())
 
         # STEP 4: Bob computes secrets
-        print("\n--- [STEP 4] Bob computes secrets ---")
+        print("\n[STEP 4] Bob computes secrets")
         bob_result = bob.compute_secrets(alice.ecdh_public, ciphertext)
 
         bob_ecdh_secret = bob_result["ecdh_secret"]
@@ -39,7 +39,7 @@ def run_hybrid_protocol():
         print("Bob Kyber secret:", bob_kyber_secret.hex())
 
         # STEP 5: Validate secrets match
-        print("\n--- [STEP 5] Validating shared secrets ---")
+        print("\n[STEP 5] Validating shared secrets")
 
         ecdh_match = alice_ecdh_secret == bob_ecdh_secret
         kyber_match = alice_kyber_secret == bob_kyber_secret
@@ -54,7 +54,7 @@ def run_hybrid_protocol():
             }
 
         # STEP 6: Derive hybrid key (HKDF)
-        print("\n--- [STEP 6] Deriving hybrid key ---")
+        print("\n[STEP 6] Deriving hybrid key")
 
         alice_final = derive_hybrid_key(alice_ecdh_secret, alice_kyber_secret)
         bob_final = derive_hybrid_key(bob_ecdh_secret, bob_kyber_secret)
@@ -63,7 +63,7 @@ def run_hybrid_protocol():
         print("Bob final key:", bob_final.hex())
 
         # STEP 7: Final validation
-        print("\n--- [STEP 7] Final key validation ---")
+        print("\n[STEP 7] Final key validation")
 
         success = alice_final == bob_final
 

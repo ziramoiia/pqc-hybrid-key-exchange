@@ -1,4 +1,3 @@
-// 
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -57,7 +56,7 @@ function DistributionBoxPlot({ data, includeFirst }) {
                 outlierRadius: 2,
                 outlierBorderWidth: 1,
 
-                meanBackgroundColor: "#111827",   // dark (almost black)
+                meanBackgroundColor: "#111827", 
                 meanBorderColor: "#111827",
                 meanRadius: 2
             }

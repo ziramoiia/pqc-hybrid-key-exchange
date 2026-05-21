@@ -98,65 +98,6 @@ def benchmark_kyber_operations():
             "error": str(e)
         }
     
-# def benchmark_hybrid_protocol():
-#     try:
-#         start_total = time.perf_counter()
-
-#         # Key generation (both parties)
-#         start = time.perf_counter()
-#         alice = Alice()
-#         bob = Bob()
-#         keygen_time = time.perf_counter() - start
-
-#         # Exchange public keys
-#         bob_ecdh_pub, bob_kyber_pub = bob.get_public_keys()
-
-#         # Alice computes secrets + encapsulates
-#         start = time.perf_counter()
-#         alice_data = alice.generate_secrets(bob_ecdh_pub, bob_kyber_pub)
-#         encap_time = time.perf_counter() - start
-
-#         # Bob decapsulates + derives
-#         start = time.perf_counter()
-#         bob_data = bob.compute_secrets(
-#             alice.ecdh_public,
-#             alice_data["ciphertext"]
-#         )
-
-#         decap_time = time.perf_counter() - start
-
-#         # HKDF Hybrid
-#         start = time.perf_counter()
-#         alice_final = derive_hybrid_key(
-#             alice_data["ecdh_secret"],
-#             alice_data["kyber_secret"]
-#         )
-#         bob_final = derive_hybrid_key(
-#             bob_data["ecdh_secret"],
-#             bob_data["kyber_secret"]
-#         )
-#         kdf_time = time.perf_counter() - start
-
-#         total_time = time.perf_counter() - start_total
-#         success = alice_final == bob_final
-
-#         return {
-#             "success": success,
-#             "keygen_time": keygen_time,
-#             "encap_time": encap_time,
-#             "decap_time": decap_time,
-#             "kdf_time": kdf_time,
-#             "total_time": total_time,
-#             "final_key_size": len(alice_final),
-#             "error": None
-#         }
-
-#     except Exception as e:
-#         return {
-#             "success": False,
-#             "error": str(e)
-#         }
-    
 def benchmark_hybrid_protocol():
     try:
         total_start = time.perf_counter()
@@ -171,12 +112,7 @@ def benchmark_hybrid_protocol():
         step_times["initialisation"] = time.perf_counter() - start
 
         # Key exchange
-        # start = time.perf_counter()
         bob_ecdh_pub, bob_kyber_pub = bob.get_public_keys()
-        # alice_result = alice.generate_secrets(bob_ecdh_pub, bob_kyber_pub)
-        # bob_result = bob.compute_secrets(alice.ecdh_public, alice_result["ciphertext"])
-        # step_times["exchange"] = time.perf_counter() - start
-
         # Alice encapsulation
         start = time.perf_counter()
         alice_result = alice.generate_secrets(bob_ecdh_pub, bob_kyber_pub)
@@ -214,16 +150,6 @@ def benchmark_hybrid_protocol():
 
         # Success determined if BOTH secrets and final key match
         success = (ecdh_match and kyber_match and (alice_final == bob_final))
-
-        # return {
-        #     "success": success,
-        #     "ecdh_secrets_match": ecdh_match,
-        #     "kyber_secrets_match": kyber_match,
-        #     "total_time": total_time,
-        #     "step_times": step_times,
-        #     "key_size": len(alice_final),
-        #     "error": None if success else "Final keys do not match"
-        # }
     
         return {
         "success": success,
@@ -248,9 +174,6 @@ def summarise(results):
     total = len(results)
     successes = sum(1 for r in results if r["success"])
 
-    # def avg(field):
-    #     return sum(r.get(field, 0) for r in results) / total
-
     def avg(field):
         valid = [r[field] for r in results if r.get("success") and field in r]
         return sum(valid) / len(valid) if valid else None
@@ -274,7 +197,6 @@ def run_benchmark(func, iterations=50, name=""):
     for i in range(iterations):
         print(f"{name} iteration {i+1}/{iterations}")
         result = func()
-        #result["ID"] = i + 1
         result = {
             "ID": i + 1,
             "protocol": name,
@@ -345,10 +267,8 @@ def run_all_benchmarks(iterations=50):
 # ENTRY POINT
 if __name__ == "__main__":
     print("Starting benchmark runner...\n")
-    #TO DO: VALUE CHECKING - NO NEGATIVES ETC 
     count = int(input("State number of iterations for benchmarking: "))
     results = run_all_benchmarks(iterations=count)
-    #results = run_all_benchmarks(iterations=5)
 
     print("\n========== SUMMARY ==========")
     print(json.dumps({

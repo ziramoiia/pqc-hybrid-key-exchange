@@ -16,12 +16,6 @@ def generate_keypair():
     # Generate public key
     public_key = private_key.public_key()
 
-    # Serializing for storage or transmission MUST BE 32BYTES LONG KEY
-    # private_bytes = private_key.private_bytes(
-    #     encoding=serialization.Encoding.Raw,
-    #     format=serialization.PrivateFormat.Raw,
-    #     encryption_algorithm=serialization.NoEncryption()
-    # )
     public_bytes = public_key.public_bytes(
         encoding=serialization.Encoding.Raw,
         format=serialization.PublicFormat.Raw
@@ -39,7 +33,7 @@ def hkdf_derive(shared_secret, info=b'ecdh-handshake'):
     hkdf = HKDF(
         algorithm=hashes.SHA256(),
         length=32,
-        salt=None,  # OK for benchmarking
+        salt=None, 
         info=info,
     )
     return hkdf.derive(shared_secret)
@@ -51,16 +45,25 @@ def run_ecdh_protocol():
         # Key generation
         alice_priv, alice_pub = generate_keypair()
         bob_priv, bob_pub = generate_keypair()
+        print("Key Generation...")
+        print("Alice pub len:", len(alice_pub))
+        print("Bob pub len:", len(bob_pub))
 
         # Raw shared secrets
         alice_shared = derive_shared_secret(alice_priv, bob_pub)
         bob_shared = derive_shared_secret(bob_priv, alice_pub)
 
+        print("Alice shared secret:", (alice_shared))
+        print("Bob shared secret:", (bob_shared))
         # HKDF applied
         alice_final = hkdf_derive(alice_shared)
         bob_final = hkdf_derive(bob_shared)
+        print("Applying HKDF...")
+        print("Alice pub len:", len(alice_pub))
+        print("Bob pub len:", len(bob_pub))
 
         success = alice_final == bob_final
+        print("ECDH Protocol Complete")
 
         return {
             "success": success,
@@ -77,33 +80,3 @@ def run_ecdh_protocol():
             "error": str(e)
         }
 
-# def benchmark_ecdh_operations():
-
-#     try:
-#         # Key generation
-#         start = time.perf_counter()
-#         alice_priv, alice_pub = generate_keypair()
-#         bob_priv, bob_pub = generate_keypair()
-#         keygen_time = time.perf_counter() - start
-
-#         # Shared secret derivation
-#         start = time.perf_counter()
-#         alice_secret = derive_shared_secret(alice_priv, bob_pub)
-#         bob_secret = derive_shared_secret(bob_priv, alice_pub)
-#         derive_time = time.perf_counter() - start
-
-#         success = alice_secret == bob_secret
-
-#         return {
-#             "success": success,
-#             "keygen_time": keygen_time,
-#             "derive_time": derive_time,
-#             "key_size": len(alice_secret),
-#             "error": None
-#         }
-
-#     except Exception as e:
-#         return {
-#             "success": False,
-#             "error": str(e)
-#         }

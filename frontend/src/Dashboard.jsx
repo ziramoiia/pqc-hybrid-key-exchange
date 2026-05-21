@@ -35,16 +35,13 @@ function Dashboard({ data, refreshData }) {
     }
   };
 
-  // <Line data={chartData} options={options} />
   return (
     <div className="p-6 max-w-7xl mx-auto">
 
       <h1 className="text-3xl font-bold mb-2 text-center">
         Hybrid Post-Quantum Key Exchange Dashboard
       </h1>
-      {/* <h2 className="text-xl mb-6 text-center">
-      Performance benchmarking of ECDH-X25519, ML-KEM (Kyber) and Hybrid Protocols
-      </h2> */}
+
       <p className="text-xl text-gray-500 text-center">
         Performance benchmarking of ECDH, Kyber, and Hybrid protocols
       </p>

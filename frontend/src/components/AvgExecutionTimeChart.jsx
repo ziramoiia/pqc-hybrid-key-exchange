@@ -30,16 +30,12 @@ function AvgExecutionTimeChart({ data, includeFirst }) {
     const sum = filtered.reduce((acc, r) => acc + r.total_time, 0); // collapses array to a single value
     return sum / filtered.length;
   };
-  // const labels = data.ecdh.results.map(r => r.ID);
+
   const chartData = {
-    // labels: includeFirst ? labels : labels.slice(1),
     labels: ["ECDH", "Kyber", "Hybrid"],
     datasets: [
       {
         label: "Average Time (ms)",
-        // label: includeFirst
-        //   ? "Average Time (s) (All Runs)"
-        //   : "Average Time (s) (Excluding First Run)",
         data: [
           convertMs(process(data.ecdh.results)),
           convertMs(process(data.kyber.results)),

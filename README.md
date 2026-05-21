@@ -1,11 +1,11 @@
 # PQC Hybrid Key Exchange
 
-A dissertation project experimenting with post-quantum cryptography (PQC) and classical–quantum hybrid key exchange approaches. Using a an implementation of Shor's algorithm as a threat demonstration followed by implementations of X25519 ECDH and ML-KEM which, through HKDF, will form the hybrid key excahnge to be benchmarked and evaluated.
+A dissertation project experimenting with post-quantum cryptography (PQC) and classical–quantum hybrid key exchange approaches. Using an implementation of Shor's algorithm as a threat demonstration followed by implementations of X25519 ECDH and ML-KEM which, through HKDF, will form the hybrid key excahnge to be benchmarked and evaluated.
  
 Contains:
 - Backend Python code (Qiskit + classical cryptography)
 - Jupyter notebooks for analysis
-- Future: frontend React dashboard
+- Frontend React dashboard
 
 ## Project Structure
 - **src/** – main Python source code  
